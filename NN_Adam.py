@@ -112,22 +112,22 @@ class adamNN:
         totRight = 0
         totalSize = len(target)
         featuresLen = len(input[0,:])
-        hiddenNodesNumb = len(self.weights1)
+        self.hNodes = len(self.weights1)
         error = 0
         for n in range(totalSize):
             x = input[n,:]
             t = target[n]
             # forward propagate
-            y = np.zeros(hiddenNodesNumb+1)
-            y[0] = 1 # bias node
-            for j in range(hiddenNodesNumb):
+            y = np.zeros(self.hNodes+1)
+            y[0] = 1
+            for j in range(self.hNodes):
                 a = 0
                 for k in range(featuresLen):
                     a += self.weights1[j,k]*x[k]
         
                 y[j+1] = hsig(a)
             a = 0
-            for j in range(hiddenNodesNumb+1):
+            for j in range(self.hNodes+1):
                 a += self.weights2[0,j]*y[j]
             z = hlin(a)
             error += (z-t)**2
@@ -143,7 +143,7 @@ class adamNN:
 
     def predictBased(self,x):
         x = self.makeBasis(x)
-        hiddenNodesNumb = len(self.weights1)
+        self.hNodes = len(self.weights1)
         
         featuresLen = len(self.weights1[0])
         
@@ -154,21 +154,21 @@ class adamNN:
         for i in range(L):
 
             # forward propagate
-            inputnode = x[i]
-            y = np.zeros(hiddenNodesNumb+1)
+            inpNode = x[i]
+            y = np.zeros(self.hNodes+1)
 
-            y[0] = 1 # bias node
-            for j in range(hiddenNodesNumb):
+            y[0] = 1
+            for j in range(self.hNodes):
                 a = 0
                 for k in range(featuresLen):
-                    vv = self.weights1[j,k]*inputnode[k]
+                    vv = self.weights1[j,k]*inpNode[k]
                     a =  a+ vv
                 val = hsig(a)
                 y[j+1] = val
 
             
             a = 0
-            for j in range(hiddenNodesNumb+1):
+            for j in range(self.hNodes+1):
                 a += self.weights2[0,j]*y[j]
     
             z[i] = hlin(a)
@@ -178,7 +178,7 @@ class adamNN:
 
     def predictBasedInt(self,x):
         x = self.makeBasis(x)
-        hiddenNodesNumb = len(self.weights1)
+        self.hNodes = len(self.weights1)
         
         featuresLen = len(self.weights1[0])
         
@@ -189,21 +189,21 @@ class adamNN:
         for i in range(L):
 
             # forward propagate
-            inputnode = x[i]
-            y = np.zeros(hiddenNodesNumb+1)
+            inpNode = x[i]
+            y = np.zeros(self.hNodes+1)
 
-            y[0] = 1 # bias node
-            for j in range(hiddenNodesNumb):
+            y[0] = 1
+            for j in range(self.hNodes):
                 a = 0
                 for k in range(featuresLen):
-                    vv = self.weights1[j,k]*inputnode[k]
+                    vv = self.weights1[j,k]*inpNode[k]
                     a =  a+ vv
                 val = hsig(a)
                 y[j+1] = val
 
             
             a = 0
-            for j in range(hiddenNodesNumb+1):
+            for j in range(self.hNodes+1):
                 a += self.weights2[0,j]*y[j]
 
             z[i] = int(hlin(a).round())
@@ -214,10 +214,10 @@ class adamNN:
         input = np.array(input)
         target = np.array(target)
         
-        # batch size
-        batchSize = self.batchSize
-        # learning rate
-        alpha = self.learnR
+
+
+
+
         
         # decay rate
         beta1 = 0.9
@@ -226,8 +226,8 @@ class adamNN:
         # prevent zero division
         epsilon = 1e-8
 
-        # hidden nodes
-        hiddenNodesNumb = self.hNodes
+
+
 
 
         input  = self.makeBasis(input)
@@ -241,10 +241,10 @@ class adamNN:
 
 
         # validation number
-        Nhold = int(round( totalSize/3))
+        holdNN = int(round( totalSize/3))
 
         # total to train
-        Ntrain = totalSize - Nhold
+        totTrain = totalSize - holdNN
 
 
         # randomly shuffle the inputs and targets
@@ -253,34 +253,34 @@ class adamNN:
         idx = rnn
 
         # split 1/3 for validation and 2/3 for training
-        train_input = input[idx[0:Ntrain],:]
-        train_target = target[idx[0:Ntrain]]
+        train_input = input[idx[0:totTrain],:]
+        train_target = target[idx[0:totTrain]]
 
-        val_input = input[idx[(Ntrain+1):totalSize],:]
-        val_target = target[idx[(Ntrain+1):totalSize]]
+        val_input = input[idx[(totTrain+1):totalSize],:]
+        val_target = target[idx[(totTrain+1):totalSize]]
 
         # Momentum parameters 
-        m1 = np.zeros((hiddenNodesNumb, featuresLen))
-        m2 = np.zeros((1,hiddenNodesNumb+1))
-        v1 = np.zeros((hiddenNodesNumb, featuresLen))
-        v2 = np.zeros((1,hiddenNodesNumb+1))
+        m1 = np.zeros((self.hNodes, featuresLen))
+        m2 = np.zeros((1,self.hNodes+1))
+        v1 = np.zeros((self.hNodes, featuresLen))
+        v2 = np.zeros((1,self.hNodes+1))
 
 
 
         # input activation
-        inputnode = np.zeros(featuresLen)
+        inpNode = np.zeros(featuresLen)
         # hidden activation
-        hiddennode = np.zeros(hiddenNodesNumb)
+        hdnNode = np.zeros(self.hNodes)
         # output activation
-        outputnode = 0
+        outNode = 0
 
 
 
 
         # initializing random layer 1 weights
-        self.weights1 = 5*np.random.randn(hiddenNodesNumb, featuresLen)  
+        self.weights1 = 5*np.random.randn(self.hNodes, featuresLen)  
         # initializing random layer 2 weights (inc bias)
-        self.weights2 = 5*np.random.randn(1,hiddenNodesNumb+1)
+        self.weights2 = 5*np.random.randn(1,self.hNodes+1)
 
         numweights = (len(self.weights1)*len(self.weights1[0])) + (len(self.weights2)*len(self.weights2[0]))
         print(str(numweights)+" weights")
@@ -303,65 +303,64 @@ class adamNN:
             oldWeights2 = np.copy(self.weights2)
             
             iter = 1
-
-            grad1 = np.zeros((hiddenNodesNumb, featuresLen))
-            grad2 = np.zeros((1,hiddenNodesNumb+1))
+            offset = -1
+            grad1 = np.zeros((self.hNodes, featuresLen))
+            grad2 = np.zeros((1,self.hNodes+1))
 
             # shuffle data for this epoch
-            rnn = list(range(Ntrain))
+            rnn = list(range(totTrain))
             random.shuffle(rnn)
             trainidx = rnn
-            # loop over mini-batches
-            offset = -1
-            for b  in range(int(math.floor(Ntrain/batchSize)-1)):
-                offset += batchSize
-                for n in range(batchSize):
+            # looping over mini-batches
+            for xx  in range(int(math.floor(totTrain/self.batchSize)-1)):
+                offset += self.batchSize
+                for n in range(self.batchSize):
 
-                    # data and target
+                    # input and target
                     x = train_input[trainidx[offset + n],:]
                     t = train_target[trainidx[offset + n]]
                     
-                    # forward propagate
-                    inputnode = x
-                    y = np.zeros(hiddenNodesNumb+1)
+                    # starting forward propagate
+                    inpNode = x
+                    y = np.zeros(self.hNodes+1)
 
-                    y[0] = 1 # bias node
-                    for j in range(hiddenNodesNumb):
-                        hiddennode[j] = 0
+                    y[0] = 1
+                    for j in range(self.hNodes):
+                        hdnNode[j] = 0
                         for k in range(featuresLen):
-                            hiddennode[j] += self.weights1[j,k]*inputnode[k]
+                            hdnNode[j] += self.weights1[j,k]*inpNode[k]
                         
-                        y[j+1] = hsig(hiddennode[j])
+                        y[j+1] = hsig(hdnNode[j])
                     
 
-                    outputnode = 0
-                    for j in range(hiddenNodesNumb+1):
-                        outputnode += self.weights2[0,j]*y[j]
-                    z = hlin(outputnode)
+                    outNode = 0
+                    for j in range(self.hNodes+1):
+                        outNode += self.weights2[0,j]*y[j]
+                    z = hlin(outNode)
                     
-                    #  forward propagate
+                  
                     
-                    # output error
+                    # calculating delta (output error)
                     delta = (z-t)
 
-                    # compute layer 2 gradients by backpropagation of delta
-                    for j in range(hiddenNodesNumb+1):
-                        if j == 0: # bias node
+                    # calculating layer 2 gradients by backpropagation of delta
+                    for j in range(self.hNodes+1):
+                        if j == 0:
                             grad2[0,j] += delta*y[j]
                         else:
-                            grad2[0,j] += delta*y[j]*hplin(outputnode)
+                            grad2[0,j] += delta*y[j]*hplin(outNode)
                                 
                     
 
-                    # compute layer 1 gradients by backpropagation of deltaj
+                    # calculating layer 1 gradients by backpropagation of delta
                     for i in range(featuresLen):
-                        for j in range(hiddenNodesNumb):
-                            grad1[j,i] += delta*self.weights2[0,j+1]*hpsig(hiddennode[j])*x[i]
+                        for j in range(self.hNodes):
+                            grad1[j,i] += delta*self.weights2[0,j+1]*hpsig(hdnNode[j])*x[i]
                         
                     
                 
 
-                # Adam update
+                # updating moment estimates
                 m1 = beta1 * m1 + (1-beta1) *grad1
                 m2 = beta1 * m2 + (1-beta1) *grad2
                 
@@ -376,16 +375,16 @@ class adamNN:
 
                 iter += 1
                 
-                # update layer 2 weights
-                for j in range(hiddenNodesNumb+1):
-                    update = alpha*m2hat[0,j]/(math.sqrt(v2hat[0,j]) + epsilon)
+                # update layer 2 weights with adam parameters
+                for j in range(self.hNodes+1):
+                    update = self.learnR*m2hat[0,j]/(math.sqrt(v2hat[0,j]) + epsilon)
                     self.weights2[0,j] -= update
                 
                 
-                # update layer 1 weights
+                # update layer 1 weights with adam parameters
                 for i in range(featuresLen):
-                    for j in range(hiddenNodesNumb):
-                        update = alpha*m1hat[j,i]/(math.sqrt(v1hat[j,i]) + epsilon)
+                    for j in range(self.hNodes):
+                        update = self.learnR*m1hat[j,i]/(math.sqrt(v1hat[j,i]) + epsilon)
                         self.weights1[j,i] -= update
                     
                 
@@ -401,14 +400,14 @@ class adamNN:
             self.valerror.append(temper1)
             self.valAccuracy.append(acc1)      
                       
-            # stop based on update magnitude
+            # calculating update magnitude
             updateVal = 0
-            for j in range(hiddenNodesNumb+1):
+            for j in range(self.hNodes+1):
                 dw = oldWeights2[0,j] - self.weights2[0,j]
                 updateVal += dw*dw
             
             for i in range(featuresLen):
-                for j in range(hiddenNodesNumb):
+                for j in range(self.hNodes):
                     dw = oldWeights1[j,i] - self.weights1[j,i]
                     updateVal += dw*dw
                 
@@ -416,7 +415,7 @@ class adamNN:
             
             print("Epoch "+str(epoch)+"/"+str(maxEpochs)+"----------error: "+str(round(temper, 4))+ " - accuracy: "+str(round(acc, 4))+ " - val_error: "+str(round(temper1, 4))+ " - val_accuracy: "+str(round(acc1, 4)))
 
-
+            # increasing epoch
             epoch += 1
         
         
@@ -430,8 +429,8 @@ class adamNN:
 def load_data(X,y, train_size=0.9):
     X = np.concatenate([X, y.reshape((len(y), 1))], axis=1)
 
-    
-    amount_of_features = X.shape[1]
+
+
     X_INp = np.copy(X)
     X_mat = X_INp
     train_split = int(round(train_size * X_mat.shape[0]))
@@ -559,6 +558,7 @@ def testSin():
 
     z = model.predictBased(x)
     plotCompare(x,z,y)
+
 
 
 
