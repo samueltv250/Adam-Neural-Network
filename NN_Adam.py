@@ -241,10 +241,10 @@ class adamNN:
 
 
         # validation number
-        holdNN = int(round( totalSize/3))
+        holdNumb = int(round( totalSize/3))
 
         # total to train
-        totTrain = totalSize - holdNN
+        totTrain = totalSize - holdNumb
 
 
         # randomly shuffle the inputs and targets
@@ -272,7 +272,7 @@ class adamNN:
         # hidden activation
         hdnNode = np.zeros(self.hNodes)
         # output activation
-        outNode = 0
+        outNN = 0
 
 
 
@@ -285,11 +285,11 @@ class adamNN:
         numweights = (len(self.weights1)*len(self.weights1[0])) + (len(self.weights2)*len(self.weights2[0]))
         print(str(numweights)+" weights")
         
-        init_train_error,init_train_acc = self.test( train_input, train_target)
-        print("Initial Training Error = "+str(init_train_error))
+       
+        print("Initial Training Error = "+str(self.test( train_input, train_target)[0]))
 
-        init_val_error,init_val_acc = self.test( val_input, val_target)
-        print("Initial Validation Error = "+str(init_val_error))
+
+        print("Initial Validation Error = "+str(self.test( val_input, val_target)[0]))
 
 
         epoch = 1
@@ -333,10 +333,10 @@ class adamNN:
                         y[j+1] = hsig(hdnNode[j])
                     
 
-                    outNode = 0
+                    outNN = 0
                     for j in range(self.hNodes+1):
-                        outNode += self.weights2[0,j]*y[j]
-                    z = hlin(outNode)
+                        outNN += self.weights2[0,j]*y[j]
+                    z = hlin(outNN)
                     
                   
                     
@@ -348,7 +348,7 @@ class adamNN:
                         if j == 0:
                             grad2[0,j] += delta*y[j]
                         else:
-                            grad2[0,j] += delta*y[j]*hplin(outNode)
+                            grad2[0,j] += delta*y[j]*hplin(outNN)
                                 
                     
 
@@ -431,16 +431,16 @@ def load_data(X,y, train_size=0.9):
 
 
 
-    X_INp = np.copy(X)
-    X_mat = X_INp
-    train_split = int(round(train_size * X_mat.shape[0]))
-    train_data = X_mat[:train_split, :]
-    x_train = train_data[:, :-1]
-    y_train = train_data[:, -1]
-    x_test = X_mat[train_split:, :-1] 
-    y_test = X_mat[train_split:, -1]
+    xInput = np.copy(X)
+    xMat = xInput
+    trainS = int(round(train_size * xMat.shape[0]))
+    trainD = xMat[:trainS, :]
+    xTrain = trainD[:, :-1]
+    yTrain = trainD[:, -1]
+    xTest = xMat[trainS:, :-1] 
+    yTest = xMat[trainS:, -1]
 
-    return x_train, y_train, x_test, y_test
+    return xTrain, yTrain, xTest, yTest
 
 
 
