@@ -46,18 +46,18 @@ def classification_report(y, pred):
 
     confMat = confusion_matrix(y, pred)
     data = np.zeros_like(confMat).astype(float)
-
     data[0][0] = round(confMat[0][0]/(confMat[0][0] + confMat[1][0]),2)
-
     data[1][0] = round(confMat[1][1]/(confMat[1][1] + confMat[0][1]),2)
-
     data[0][1] = 1 - data[0][0] 
-
     data[1][1] = 1 - data[1][0]
-
     df = pd.DataFrame(data, columns=['Precision', 'Error rate'])
     print(df)
     return df
+
+
+
+
+
 
 
 
@@ -148,8 +148,8 @@ class adamNN:
         featuresLen = len(self.weights1[0])
         
     
-        L = len(x);
-        z = np.zeros(L);
+        L = len(x)
+        z = np.zeros(L)
 
         for i in range(L):
 
@@ -161,8 +161,8 @@ class adamNN:
             for j in range(self.hNodes):
                 a = 0
                 for k in range(featuresLen):
-                    vv = self.weights1[j,k]*inpNode[k]
-                    a =  a+ vv
+
+                    a =  a+ self.weights1[j,k]*inpNode[k]
                 val = hsig(a)
                 y[j+1] = val
 
@@ -183,8 +183,8 @@ class adamNN:
         featuresLen = len(self.weights1[0])
         
     
-        L = len(x);
-        z = np.zeros(L);
+        L = len(x)
+        z = np.zeros(L)
 
         for i in range(L):
 
@@ -196,8 +196,8 @@ class adamNN:
             for j in range(self.hNodes):
                 a = 0
                 for k in range(featuresLen):
-                    vv = self.weights1[j,k]*inpNode[k]
-                    a =  a+ vv
+                    
+                    a =  a + self.weights1[j,k]*inpNode[k]
                 val = hsig(a)
                 y[j+1] = val
 
@@ -341,7 +341,7 @@ class adamNN:
                   
                     
                     # calculating delta (output error)
-                    delta = (z-t)
+                    delta = z-t
 
                     # calculating layer 2 gradients by backpropagation of delta
                     for j in range(self.hNodes+1):
@@ -357,7 +357,7 @@ class adamNN:
                         for j in range(self.hNodes):
                             grad1[j,i] += delta*self.weights2[0,j+1]*hpsig(hdnNode[j])*x[i]
                         
-                    
+                     
                 
 
                 # updating moment estimates
@@ -518,14 +518,14 @@ def draw(totalSize):
 def visualizeData(df):
     # Checking for the class imbalance
     fig = plt.figure(figsize = (10, 6))
-    axis = sns.countplot(x = 'RainTomorrow', data = df);
-    axis.set_title('Class Distribution for the target feature', size = 16);
+    axis = sns.countplot(x = 'RainTomorrow', data = df)
+    axis.set_title('Class Distribution for the target feature', size = 16)
     for patch in axis.patches:
         axis.text(x = patch.get_x() + patch.get_width()/2, y = patch.get_height()/2, 
                 s = f"{np.round(patch.get_height()/len(df)*100, 1)}%", 
                 ha = 'center', size = 40, rotation = 0, weight = 'bold' ,color = 'white')
     axis.set_xlabel('Rain Tomorrow', size = 14)
-    axis.set_ylabel('Count', size = 14);
+    axis.set_ylabel('Count', size = 14)
     plt.show()
 
 
